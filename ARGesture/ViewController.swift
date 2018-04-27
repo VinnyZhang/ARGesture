@@ -17,6 +17,7 @@ class ViewController: UIViewController {
     var sessionConfig: ARConfiguration? //会话配置
     var maskView = UIView() // 遮罩视图
     var tipLabel = UILabel()//提示标签
+    var currentSelectNode: SCNNode?
     
 
     override func viewDidLoad() {
@@ -48,7 +49,7 @@ class ViewController: UIViewController {
         scnView.frame = self.view.frame
         self.view.addSubview(scnView)
         scnView.delegate = self
-        scnView.showsStatistics = true
+//        scnView.showsStatistics = true
         scnView.autoenablesDefaultLighting = true
         scnView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         
@@ -61,6 +62,8 @@ class ViewController: UIViewController {
         tipLabel.frame = CGRect(x: 0, y: 40, width: self.view.frame.size.width, height: 50)
         tipLabel.textColor = UIColor.black
         tipLabel.numberOfLines = 0
+        
+        addGestureOfScnView()
         
     }
     
@@ -109,6 +112,24 @@ class ViewController: UIViewController {
     ///
     /// - Parameter tapGestureRecongizer: 手势触发信息
     @objc func tapGestureEventFrom(tapGestureRecognizer : UITapGestureRecognizer) {
+        let point = tapGestureRecognizer.location(in: self.scnView)
+        
+        if let result = self.scnView.hitTest(point, types: .existingPlaneUsingExtent).first {
+            let vector = SCNVector3.positionTransform(result.worldTransform)
+            
+            //      添加3D立方体
+            let boxGeometry = SCNBox(width: 0.2, height: 0.2, length: 0.2, chamferRadius: 0.0)
+            let material = SCNMaterial()
+            let img = UIImage(named: "gc.png")
+            material.diffuse.contents = img
+            material.lightingModel = .physicallyBased
+            boxGeometry.materials = [material]
+            
+            let boxNode = SCNNode(geometry: boxGeometry)
+            boxNode.position = vector
+            self.scnView.scene.rootNode.addChildNode(boxNode)
+            
+        }
         
     }
     
@@ -116,6 +137,14 @@ class ViewController: UIViewController {
     ///
     /// - Parameter longGestureRecognizer: 手势触发信息
     @objc func longGestureEventFrom(longGestureRecognizer : UILongPressGestureRecognizer) {
+        let point = longGestureRecognizer.location(in: self.scnView)
+        if let result = self.scnView.hitTest(point, options: nil).first {
+            if !(result.node.parent is PlaneNode) {
+                if result.node.parent != nil {
+                    result.node.removeFromParentNode()
+                }
+            }
+        }
         
     }
     
@@ -123,14 +152,58 @@ class ViewController: UIViewController {
     ///
     /// - Parameter panGestureRecognizer: 滑动手势触发信息
     @objc func panGestureEventFrom(panGestureRecognizer: UIPanGestureRecognizer) {
-        
+        if panGestureRecognizer.state == .began {//开始移动
+            let point = panGestureRecognizer.location(in: self.scnView)
+            if let result = self.scnView.hitTest(point, options: nil).first {
+                if !(result.node.parent is PlaneNode)  {
+                    self.currentSelectNode = result.node
+                }
+                
+            }
+            
+        }
+        if panGestureRecognizer.state == .changed {//正在移动
+            if self.currentSelectNode != nil {
+                let point = panGestureRecognizer.location(in: self.scnView)
+                if let result = self.scnView.hitTest(point, types: .existingPlaneUsingExtent).first {
+                    let vector = SCNVector3.positionTransform(result.worldTransform)
+                    self.currentSelectNode?.position = vector
+                }
+            }
+        }
+        if panGestureRecognizer.state == .ended {//结束移动
+            self.currentSelectNode = nil
+        }
     }
     
     /// 捏合手势触发动作
     ///
     /// - Parameter pinchGestureRecognizer: 捏合手势信息
     @objc func pinchGestureEventFrom(pinchGestureRecognizer: UIPinchGestureRecognizer) {
-        
+        if pinchGestureRecognizer.state == .began {
+            let point = pinchGestureRecognizer.location(in: self.scnView)
+            if let result = self.scnView.hitTest(point, options: nil).first {
+
+                if !(result.node.parent is PlaneNode) {
+                    self.currentSelectNode = result.node
+                }
+            }
+        }
+        if pinchGestureRecognizer.state == .changed {
+            if self.currentSelectNode != nil {
+                // 根据每次捏合的比例来更新节点最新的比例
+                let pinchScaleX = Float(pinchGestureRecognizer.scale) * (self.currentSelectNode?.scale.x)!
+                let pinchScaleY = Float(pinchGestureRecognizer.scale) * (self.currentSelectNode?.scale.y)!
+                let pinchScaleZ = Float(pinchGestureRecognizer.scale) * Float((self.currentSelectNode?.scale.y)!)
+                let vector = SCNVector3Make(pinchScaleX, pinchScaleY, pinchScaleZ)
+                self.currentSelectNode?.scale = vector
+            }
+            
+            pinchGestureRecognizer.scale = 1.0
+        }
+        if pinchGestureRecognizer.state == .ended {
+            self.currentSelectNode = nil
+        }
     }
 
 

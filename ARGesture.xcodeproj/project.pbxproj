@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F55B2572092C82E0009BE0A /* gc.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F55B2562092C82E0009BE0A /* gc.png */; };
 		5FF681D72091E12200F3408E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF681D62091E12200F3408E /* AppDelegate.swift */; };
 		5FF681D92091E12200F3408E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF681D82091E12200F3408E /* ViewController.swift */; };
 		5FF681DC2091E12200F3408E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FF681DA2091E12200F3408E /* Main.storyboard */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5F55B2562092C82E0009BE0A /* gc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gc.png; sourceTree = "<group>"; };
 		5FF681D32091E12200F3408E /* ARGesture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARGesture.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FF681D62091E12200F3408E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5FF681D82091E12200F3408E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				5FF681EC2091E28F00F3408E /* PlaneNode.swift */,
 				5FF681EE2091EA9C00F3408E /* ARSCNView+Extension.swift */,
 				5FF681EF2091EA9C00F3408E /* SCNVector3+Extention.swift */,
+				5F55B2562092C82E0009BE0A /* gc.png */,
 				5FF681DD2091E12300F3408E /* Assets.xcassets */,
 				5FF681DF2091E12300F3408E /* LaunchScreen.storyboard */,
 				5FF681E22091E12300F3408E /* Info.plist */,
@@ -142,6 +145,7 @@
 				5FF681EB2091E24B00F3408E /* MoonScene.scn in Resources */,
 				5FF681DE2091E12300F3408E /* Assets.xcassets in Resources */,
 				5FF681DC2091E12200F3408E /* Main.storyboard in Resources */,
+				5F55B2572092C82E0009BE0A /* gc.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
