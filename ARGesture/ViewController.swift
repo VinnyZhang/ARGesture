@@ -104,6 +104,10 @@ class ViewController: UIViewController {
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(pinchGestureEventFrom(pinchGestureRecognizer:)))
         self.scnView.addGestureRecognizer(pinchGesture)
         
+//        旋转手势
+        let rotationGesture = UIRotationGestureRecognizer(target: self, action: #selector(rotationGestureEventFrom(rotationGestureRecognizer:)))
+        self.scnView.addGestureRecognizer(rotationGesture)
+        
         
     }
     
@@ -202,6 +206,24 @@ class ViewController: UIViewController {
             pinchGestureRecognizer.scale = 1.0
         }
         if pinchGestureRecognizer.state == .ended {
+            self.currentSelectNode = nil
+        }
+    }
+    
+    @objc func rotationGestureEventFrom(rotationGestureRecognizer: UIRotationGestureRecognizer) {
+        if rotationGestureRecognizer.state == .began {
+            let point = rotationGestureRecognizer.location(in: self.scnView)
+            if  let result = self.scnView.hitTest(point, options: nil).first {
+                if !(result.node.parent is PlaneNode) {
+                    self.currentSelectNode = result.node
+                }
+            }
+        }
+        if rotationGestureRecognizer.state == .changed {
+            self.currentSelectNode?.eulerAngles.y -= Float(rotationGestureRecognizer.rotation)
+            rotationGestureRecognizer.rotation = 0
+        }
+        if rotationGestureRecognizer.state == .ended {
             self.currentSelectNode = nil
         }
     }
